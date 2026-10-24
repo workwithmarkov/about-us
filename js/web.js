@@ -1,15 +1,16 @@
 /* hero web canvas */
 (function(){
   const cv=$('#web');if(!cv)return;const ctx=cv.getContext('2d'),hero=cv.closest('.hero,.phero,.nf');
+  const touch=matchMedia('(pointer:coarse)').matches;
   let W=0,H=0,dpr=1,nodes=[],adj=[],sparks=[],rings=[],lit=new Map(),litN=[],mouse={x:-9999,y:-9999},run=true,last=0,auto=0;
   const rnd=(a,b)=>a+Math.random()*(b-a);
   function init(){
-    const n=Math.max(26,Math.min(88,Math.round(W*H/15500)));
+    const n=Math.max(touch?18:26,Math.min(touch?64:88,Math.round(W*H/(touch?22000:15500))));
     nodes=[];for(let i=0;i<n;i++){const hub=Math.random()<.09;nodes.push({x:rnd(0,W),y:rnd(0,H),vx:rnd(-.22,.22),vy:rnd(-.22,.22),r:hub?rnd(6,10):rnd(1.8,3.6),hub})}
     lit.clear();litN=new Array(n).fill(0);sparks=[];rings=[];
   }
   function size(){
-    const r=cv.getBoundingClientRect();dpr=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;
+    const r=cv.getBoundingClientRect();dpr=Math.min(touch?1.4:2,devicePixelRatio||1);W=r.width;H=r.height;
     cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);init();draw(0);
   }
   function nearest(x,y){let b=0,bd=1e9;nodes.forEach((n,i)=>{const d=(n.x-x)**2+(n.y-y)**2;if(d<bd){bd=d;b=i}});return b}
